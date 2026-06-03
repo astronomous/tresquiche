@@ -74,10 +74,6 @@ def header() -> rx.Component:
             class_name="hero-title",
             as_="h1",
         ),
-        rx.text(
-            "Een AI met twee obsessies: quiche en anagrammen.",
-            class_name="hero-sub",
-        ),
         spacing="4",
         align="center",
         padding_top=["3.5rem", "5rem", "6rem"],
@@ -123,10 +119,6 @@ def render_message(msg, idx) -> rx.Component:
 def empty_state() -> rx.Component:
     return rx.vstack(
         rx.box("🥧", class_name="pie-glow"),
-        rx.text(
-            "Stel een vraag. Krijg een quiche-doordrenkt antwoord — met je input herschikt tot een anagram.",
-            class_name="empty-text",
-        ),
         align="center",
         spacing="5",
         padding_y="3rem",
