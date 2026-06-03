@@ -1,7 +1,5 @@
 # 🥧 Tres Quiche
 
-> Een AI-chatbot die in elk antwoord een anagram van jouw vraag verwerkt — en het altijd over quiche heeft.
-
 ## Starten in GitHub Codespaces
 
 ### Stap 1 — Maak een Anthropic-account aan
