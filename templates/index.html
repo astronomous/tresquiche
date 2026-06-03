@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tres Quiche</title>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream:    #f5f0e8;
+      --crust:    #c8a96e;
+      --filling:  #7a3b1e;
+      --dark:     #1a1208;
+      --accent:   #e8522a;
+      --muted:    #9e8c74;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cream);
+      color: var(--dark);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      padding: 2rem 2rem 1rem;
+      text-align: center;
+      border-bottom: 2px solid var(--crust);
+      position: relative;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--filling);
+    }
+
+    header h1 span {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    header p {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: 0.4rem;
+    }
+
+    .pie-decoration {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      opacity: 0.25;
+    }
+    .pie-decoration.left  { left: 2rem; }
+    .pie-decoration.right { right: 2rem; }
+
+    main {
+      width: 100%;
+      max-width: 760px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.5rem;
+      gap: 1.5rem;
+    }
+
+    #chat-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-height: 300px;
+    }
+
+    .message {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      animation: fadeUp 0.2s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .message .label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .message.user .bubble {
+      background: var(--filling);
+      color: var(--cream);
+      align-self: flex-end;
+      border-radius: 1rem 1rem 0.2rem 1rem;
+    }
+
+    .message.assistant .bubble {
+      background: white;
+      border: 1.5px solid var(--crust);
+      align-self: flex-start;
+      border-radius: 1rem 1rem 1rem 0.2rem;
+      white-space: pre-wrap;
+      line-height: 1.7;
+    }
+
+    .bubble {
+      padding: 0.85rem 1.1rem;
+      font-size: 0.9rem;
+      max-width: 90%;
+    }
+
+    .message.user { align-items: flex-end; }
+    .message.assistant { align-items: flex-start; }
+
+    /* streaming cursor */
+    .streaming::after {
+      content: '▋';
+      animation: blink 0.7s step-end infinite;
+      color: var(--accent);
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    form {
+      display: flex;
+      gap: 0.75rem;
+      border-top: 2px solid var(--crust);
+      padding-top: 1.25rem;
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      border: 1.5px solid var(--crust);
+      border-radius: 0.6rem;
+      padding: 0.75rem 1rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+      background: white;
+      color: var(--dark);
+      outline: none;
+      transition: border-color 0.15s;
+      rows: 2;
+    }
+
+    textarea:focus { border-color: var(--filling); }
+
+    button {
+      background: var(--filling);
+      color: var(--cream);
+      border: none;
+      border-radius: 0.6rem;
+      padding: 0 1.4rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-style: italic;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    button:hover  { background: var(--accent); }
+    button:active { transform: scale(0.97); }
+
+    button[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    .empty-state .big { font-size: 3rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="pie-decoration left">🥧</span>
+  <h1>Tres <span>Quiche</span></h1>
+  <p>Een anagram per antwoord &mdash; altijd over quiche</p>
+  <span class="pie-decoration right">🥧</span>
+</header>
+
+<main>
+  <div id="chat-box">
+    <div class="empty-state">
+      <div class="big">🥧</div>
+      <div>Stel een vraag. Ontvang een anagram. Verplicht over quiche.</div>
+    </div>
+  </div>
+
+  <form id="chat-form">
+    <textarea
+      id="user-input"
+      name="message"
+      placeholder="Stel een vraag..."
+      rows="2"
+      required
+    ></textarea>
+    <button type="submit" id="send-btn">Verstuur</button>
+  </form>
+</main>
+
+<script>
+  const form      = document.getElementById('chat-form');
+  const input     = document.getElementById('user-input');
+  const chatBox   = document.getElementById('chat-box');
+  const sendBtn   = document.getElementById('send-btn');
+
+  // Submit on Enter (Shift+Enter = newline)
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+    }
+  });
+
+  function clearEmptyState() {
+    const empty = chatBox.querySelector('.empty-state');
+    if (empty) empty.remove();
+  }
+
+  function appendMessage(role, text) {
+    clearEmptyState();
+    const wrap   = document.createElement('div');
+    wrap.className = `message ${role}`;
+    const label  = document.createElement('div');
+    label.className = 'label';
+    label.textContent = role === 'user' ? 'Jij' : 'Tres Quiche';
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.textContent = text;
+    wrap.appendChild(label);
+    wrap.appendChild(bubble);
+    chatBox.appendChild(wrap);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    return bubble;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const message = input.value.trim();
+    if (!message) return;
+
+    input.value = '';
+    sendBtn.disabled = true;
+
+    // User message
+    appendMessage('user', message);
+
+    // Assistant placeholder
+    const bubble = appendMessage('assistant', '');
+    bubble.classList.add('streaming');
+
+    // Stream response
+    const formData = new FormData();
+    formData.append('message', message);
+
+    try {
+      const response = await fetch('/chat', { method: 'POST', body: formData });
+      const reader   = response.body.getReader();
+      const decoder  = new TextDecoder();
+      let full = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        full += decoder.decode(value, { stream: true });
+        bubble.textContent = full;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    } catch (err) {
+      bubble.textContent = '⚠️ Er ging iets mis. Controleer je API-sleutel.';
+    } finally {
+      bubble.classList.remove('streaming');
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  });
+</script>
+
+</body>
+</html>
