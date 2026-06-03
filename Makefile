@@ -1,10 +1,17 @@
-.PHONY: install run dev
+.PHONY: install init run dev clean
 
 install:
 	pip install --upgrade -r requirements.txt
+	reflex init --template blank
 
-run:
-	uvicorn main:app
+init:
+	reflex init --template blank
 
 dev:
-	uvicorn main:app --reload
+	reflex run --env dev
+
+run:
+	reflex run --env prod
+
+clean:
+	rm -rf .web __pycache__ */__pycache__

@@ -1,38 +1,51 @@
-# 🥧 Tres Quiche
+# 🥧 Tres Quiche — `hipster` branch
+
+> Een herwerking van de Tres Quiche chat met **[Reflex](https://reflex.dev)** —
+> een pure-Python framework dat compileert naar React + Next.js. Donker thema,
+> gradient-glow, glass-bubbels, gestreamde anagram-antwoorden. Klaar voor Series A.
+
+## Wat is anders dan `main`?
+
+| | `main` | `hipster` |
+|---|---|---|
+| Backend | FastAPI + Jinja2 | Reflex (pure Python) |
+| Frontend | HTML/CSS/JS + HTMX-ish fetch | Auto-gegenereerd React via Reflex |
+| Streaming | `StreamingResponse` van plain text | Reactive state (`yield` in async event) |
+| Styling | Custom CSS | Custom CSS + Radix theme (dark, orange accent) |
 
 ## Starten in GitHub Codespaces
 
-### Stap 1 — Maak een Anthropic-account aan
+### 1 — Maak een Anthropic-account aan
 
 1. Ga naar [console.anthropic.com](https://console.anthropic.com)
 2. Maak een account aan
 3. Ga naar **API Keys → Create Key**
 4. Kopieer de sleutel (begint met `sk-ant-...`) — je ziet hem maar één keer!
 
-### Stap 2 — Open de Codespace
+### 2 — Open de Codespace
 
-1. Klik op **Code → Open with Codespaces → New codespace**
-2. Wacht tot de omgeving klaar is (dependencies worden automatisch geïnstalleerd)
+Klik op **Code → Open with Codespaces → New codespace** en wacht tot dependencies geïnstalleerd zijn.
 
-### Stap 3 — Voeg je API-sleutel toe
+### 3 — Voeg je API-sleutel toe
 
-Maak een `.env` bestand aan op basis van het voorbeeld:
 ```
 cp .env.example .env
 ```
-Open `.env` en vul je sleutel in:
+Open `.env` en zet je sleutel:
 ```
 ANTHROPIC_API_KEY=sk-ant-...
 ```
-> ⚠️ Commit dit bestand nooit naar GitHub. Het staat al in `.gitignore`, dus dat gaat automatisch goed.
 
-### Stap 4 — Start de app
+### 4 — Start de app
 
 ```
 make dev
 ```
 
-Codespaces opent automatisch een preview. Stel een vraag!
+De Reflex dev-server start op poort **3000** (frontend) en **8000** (backend).
+Codespaces forward't 3000 automatisch — klik op de preview.
+
+> Eerste keer duurt het ~30s: Reflex installeert Node deps en bouwt de Next.js-app.
 
 ---
 
@@ -40,20 +53,22 @@ Codespaces opent automatisch een preview. Stel een vraag!
 
 | Commando | Wat doet het? |
 |---|---|
-| `make install` | Installeert alle dependencies |
-| `make dev` | Start de app met auto-reload (voor ontwikkeling) |
-| `make run` | Start de app zonder auto-reload (voor productie) |
+| `make install` | Installeert Python-deps en initialiseert Reflex |
+| `make dev` | Start de app met hot-reload |
+| `make run` | Start in productiemodus |
+| `make clean` | Verwijdert build-artefacten (`.web/`, caches) |
 
-## Hoe werkt het?
+## Bestanden
 
 | Bestand | Wat doet het? |
 |---|---|
-| `main.py` | De backend — ontvangt je vraag, stuurt hem naar Claude, streamt het antwoord terug |
-| `templates/index.html` | De frontend — de chatinterface in je browser |
-| `.env` | Je geheime API-sleutel (wordt nooit geüpload naar GitHub) |
+| `tres_quiche/tres_quiche.py` | De hele app — state, UI, Anthropic streaming |
+| `assets/styles.css` | Custom CSS: gradient bg, glass bubbels, animaties |
+| `rxconfig.py` | Reflex configuratie |
+| `.env` | Je geheime API-sleutel (nooit committen) |
 
 ## Wil je iets aanpassen?
 
-- **Andere persoonlijkheid?** Pas `SYSTEM_PROMPT` aan in `main.py`
-- **Ander model?** Verander `claude-opus-4-5` naar een ander Claude-model
-- **Andere stijl?** Pas de CSS aan in `templates/index.html`
+- **Andere persoonlijkheid?** Pas `SYSTEM_PROMPT` aan in `tres_quiche/tres_quiche.py`
+- **Andere accentkleur?** Wijzig `accent_color` in `rx.theme(...)` (Radix kleuren: orange, tomato, ruby, amber, ...) én de CSS-variabelen in `assets/styles.css`
+- **Ander model?** Verander `claude-opus-4-5` in `tres_quiche/tres_quiche.py`

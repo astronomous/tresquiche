@@ -2,3 +2,6 @@
 __pycache__/
 *.pyc
 .venv/
+.web/
+.states/
+.DS_Store

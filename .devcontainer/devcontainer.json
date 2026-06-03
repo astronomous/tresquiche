@@ -2,11 +2,15 @@
   "name": "Tres Quiche",
   "image": "mcr.microsoft.com/devcontainers/python:3.12",
   "postCreateCommand": "make install",
-  "forwardPorts": [8000],
+  "forwardPorts": [3000, 8000],
   "portsAttributes": {
-    "8000": {
+    "3000": {
       "label": "Tres Quiche",
       "onAutoForward": "openBrowser"
+    },
+    "8000": {
+      "label": "Reflex backend",
+      "onAutoForward": "silent"
     }
   },
   "customizations": {
@@ -14,8 +18,7 @@
       "extensions": [
         "ms-python.python",
         "ms-python.vscode-pylance",
-        "github.copilot",
-        "htmx-tags.html-htmx-tags"
+        "github.copilot"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/bin/python"
