@@ -159,7 +159,7 @@ def input_bar() -> rx.Component:
                     placeholder="Vraag iets… eigenlijk alles.",
                     class_name="input",
                     auto_focus=True,
-                    auto_complete="off",
+                    auto_complete=False,
                 ),
                 rx.button(
                     rx.cond(ChatState.is_streaming, "Bakken…", "Verstuur →"),
