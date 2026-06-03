@@ -153,19 +153,24 @@ def input_bar() -> rx.Component:
     return rx.box(
         rx.form(
             rx.box(
-                rx.input(
+                rx.text_area(
                     value=ChatState.question,
                     on_change=ChatState.set_question,
                     placeholder="Vraag iets… eigenlijk alles.",
                     class_name="input",
                     auto_focus=True,
-                    auto_complete=False,
+                    rows="3",
+                    resize="none",
                 ),
-                rx.button(
-                    rx.cond(ChatState.is_streaming, "Bakken…", "Verstuur →"),
-                    type="submit",
-                    disabled=ChatState.is_streaming,
-                    class_name="send-btn",
+                rx.box(
+                    rx.text("⌘ + ↵ om te versturen", class_name="input-hint"),
+                    rx.button(
+                        rx.cond(ChatState.is_streaming, "Bakken…", "Verstuur →"),
+                        type="submit",
+                        disabled=ChatState.is_streaming,
+                        class_name="send-btn",
+                    ),
+                    class_name="input-actions",
                 ),
                 class_name="input-wrap",
             ),

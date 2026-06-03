@@ -102,7 +102,7 @@ body::after {
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 10rem;
+  padding: 2rem 1.5rem 13rem;
   position: relative;
   z-index: 1;
 }
@@ -199,9 +199,10 @@ body::after {
 
 .input-wrap {
   display: flex;
-  gap: 0.6rem;
-  padding: 0.55rem;
-  border-radius: 20px;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.85rem 0.95rem 0.75rem;
+  border-radius: 24px;
   background: var(--glass-strong);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
@@ -218,18 +219,40 @@ body::after {
               inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.input {
-  flex: 1;
+.input,
+textarea.input {
+  width: 100%;
   background: transparent;
   border: none;
   outline: none;
   color: var(--fg);
   font-family: 'Inter', sans-serif;
-  font-size: 0.97rem;
-  padding: 0.7rem 0.9rem;
+  font-size: 1rem;
+  padding: 0.6rem 0.7rem;
+  line-height: 1.55;
+  min-height: 5.75rem;
+  resize: none;
+  box-shadow: none;
 }
 
-.input::placeholder { color: var(--muted); }
+.input::placeholder,
+textarea.input::placeholder { color: var(--muted); }
+
+.input-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.3rem 0.1rem;
+}
+
+.input-hint {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0.7;
+}
 
 .send-btn {
   background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 80%);
@@ -278,7 +301,9 @@ body::after {
 }
 
 @media (max-width: 640px) {
-  .chat-area { padding: 1.5rem 1rem 9rem; }
+  .chat-area { padding: 1.5rem 1rem 12rem; }
   .input-bar { padding: 1rem; }
   .hero-title { font-size: clamp(3.5rem, 16vw, 6rem); }
+  textarea.input { min-height: 4.5rem; }
+  .input-hint { display: none; }
 }
